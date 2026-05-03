@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Virginia Oficial — Indumentaria urbana fabricada en Buenos Aires. Buzos, remeras, pantalones y más. Venta minorista y mayorista. Envíos a todo el país.">
+<meta name="theme-color" content="#0a0a0a">
+<title>Virginia Oficial | Ropa Urbana — Flores, Buenos Aires</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="notif" id="notif"></div>
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h3>CARRITO</h3>
+    <button class="close-btn" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"><div class="cart-empty">Tu carrito está vacío</div></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-num" id="cart-total-num">$0</span>
+    </div>
+    <button class="checkout-btn" onclick="goCheckout()">Finalizar por WhatsApp 💬</button>
+  </div>
+</div>
+
+<a class="wa-float" href="https://wa.link/d8hgwf" target="_blank" title="WhatsApp">💬</a>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="goHome()">🏠 Inicio</a>
+  <a onclick="goShop()">👕 Tienda</a>
+  <a onclick="goMayorista()">📦 Info Mayorista</a>
+  <a onclick="goContact()">📍 Contacto</a>
+  <a class="mm-admin" onclick="showAdmin()">⚙️ Administrador</a>
+</div>
+
+<!-- ══════ SITE ══════ -->
+<div id="site-page" class="page active">
+  <div class="topbar">Envíos a todo el país &nbsp;·&nbsp; Minorista y Mayorista &nbsp;·&nbsp; Flores, CABA</div>
+  <nav>
+    <div class="logo" onclick="goHome()">VIRGINIA<span>.</span></div>
+    <ul class="nav-links">
+      <li><a onclick="goHome()">Inicio</a></li>
+      <li><a onclick="goShop()">Tienda</a></li>
+      <li><a onclick="goMayorista()">Mayorista</a></li>
+      <li><a onclick="goContact()">Contacto</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></button>
+      <button class="nav-btn" onclick="showAdmin()">Admin</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <section class="hero" id="inicio">
+    <div class="hero-left">
+      <div class="season-tag">Otoño — Invierno 2026</div>
+      <h1 class="hero-title">NUEVA<br><em>COLECCIÓN</em></h1>
+      <p class="hero-desc">Fabricantes directos de ropa urbana desde Buenos Aires. Sin intermediarios, sin vueltas.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="goShop()">Ver colección</button>
+        <button class="btn-ghost" onclick="goMayorista()">Info Mayorista</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="img/DSC00116-scaled.jpg" alt="Nueva colección Virginia Oficial" loading="eager">
+      <div class="hero-overlay"></div>
+      <div class="hero-badge">NUEVA TEMP.</div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">5K+</div><div class="stat-label">Clientes</div></div>
+        <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Fab. propia</div></div>
+        <div class="stat"><div class="stat-num">24hs</div><div class="stat-label">Despacho</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee-inner">
+      <span>BUZOS</span><span class="dot">✦</span><span>REMERAS</span><span class="dot">✦</span><span>PANTALONES</span><span class="dot">✦</span><span>PREMIUM</span><span class="dot">✦</span><span>KIDS</span><span class="dot">✦</span><span>RÚSTICO</span><span class="dot">✦</span><span>COMBOS</span><span class="dot">✦</span><span>MAYORISTA</span><span class="dot">✦</span>
+      <span>BUZOS</span><span class="dot">✦</span><span>REMERAS</span><span class="dot">✦</span><span>PANTALONES</span><span class="dot">✦</span><span>PREMIUM</span><span class="dot">✦</span><span>KIDS</span><span class="dot">✦</span><span>RÚSTICO</span><span class="dot">✦</span><span>COMBOS</span><span class="dot">✦</span><span>MAYORISTA</span><span class="dot">✦</span>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-header"><h2 class="section-title">CATEGORÍAS</h2><a class="section-link" onclick="goShop()">Ver todo →</a></div>
+    <div class="cat-grid">
+      <div class="cat-card" onclick="goShop()"><img src="img/DSC06907-scaled.jpg" alt="Buzos" loading="lazy"><div class="cat-overlay"><div class="cat-name">BUZOS</div><div class="cat-count">Frizado · Over · Combinado</div></div></div>
+      <div class="cat-card" onclick="goShop()"><img src="img/DSC06925-scaled.jpg" alt="Remeras" loading="lazy"><div class="cat-overlay"><div class="cat-name">REMERAS</div><div class="cat-count">Boxy · Musculosa · Pupera</div></div></div>
+      <div class="cat-card" onclick="goShop()"><img src="img/IMG-20260408-WA0124-scaled.jpg" alt="Premium" loading="lazy"><div class="cat-overlay"><div class="cat-name">PREMIUM</div><div class="cat-count">Drop exclusivo</div></div></div>
+      <div class="cat-card" onclick="goShop()"><img src="img/inbound4468380888781350918-601x800.jpg" alt="Pantalones" loading="lazy"><div class="cat-overlay"><div class="cat-name">PANTALONES</div><div class="cat-count">Colección otoño</div></div></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" id="tienda">
+    <div class="section-header"><h2 class="section-title">LOS MÁS BUSCADOS</h2><a class="section-link">Ver todos →</a></div>
+    <div class="products-grid" id="products-grid"></div>
+  </section>
+
+  <div class="mayorista" id="mayorista">
+    <div>
+      <div class="mayorista-tag">Para revendedores</div>
+      <h3 class="mayorista-title">INFO<br>MAYORISTA</h3>
+      <p class="mayorista-desc">Fabricamos sin intermediarios. Precios competitivos con pedido mínimo de $50.000. Envíos a todo el país en 24hs.</p>
+      <a href="https://wa.link/d8hgwf" target="_blank"><button class="btn-primary" style="margin-top:28px">Consultar por WhatsApp →</button></a>
+    </div>
+    <div class="mayorista-stats">
+      <div class="m-stat"><div class="m-num">$50K</div><div class="m-label">Mínimo de compra</div></div>
+      <div class="m-stat"><div class="m-num">24hs</div><div class="m-label">Despacho</div></div>
+      <div class="m-stat"><div class="m-num">🇦🇷</div><div class="m-label">Todo el país</div></div>
+    </div>
+  </div>
+
+  <div class="contact-strip" id="contacto">
+    <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-label">Ubicación</div><div class="contact-val">Azul 38, Flores, CABA</div></div></div>
+    <div class="contact-item"><div class="contact-icon">📱</div><div><div class="contact-label">WhatsApp</div><div class="contact-val">+54 9 11 7605-2037</div></div></div>
+    <div class="contact-item"><div class="contact-icon">✉</div><div><div class="contact-label">Email</div><div class="contact-val">virginiaoficial6@gmail.com</div></div></div>
+    <div class="contact-item"><div class="contact-icon">🕐</div><div><div class="contact-label">Horario</div><div class="contact-val">Lun–Sáb 10–18hs</div></div></div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="logo">VIRGINIA<span style="color:var(--accent)">.</span></span>
+      <p class="footer-desc">Fabricantes de indumentaria urbana desde Flores, Buenos Aires. Calidad garantizada sin intermediarios.</p>
+      <div class="social-links">
+        <a class="social-btn" href="https://www.instagram.com/virginiaoficial.ok/" target="_blank">IG</a>
+        <a class="social-btn" href="https://wa.link/d8hgwf" target="_blank">WA</a>
+        <a class="social-btn" href="https://www.tiktok.com/@virginiaoficial.ok" target="_blank">TT</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Navegación</h4><ul><li><a onclick="goHome()">Inicio</a></li><li><a onclick="goShop()">Tienda</a></li><li><a onclick="goMayorista()">Mayorista</a></li><li><a onclick="goContact()">Contacto</a></li></ul></div>
+    <div class="footer-col"><h4>Categorías</h4><ul><li><a>Buzos</a></li><li><a>Remeras</a></li><li><a>Pantalones</a></li><li><a>Kids</a></li><li><a>Combos</a></li><li><a>Rústico</a></li></ul></div>
+    <div class="footer-col"><h4>Ayuda</h4><ul><li><a>Cómo comprar</a></li><li><a>Envíos</a></li><li><a>Cambios y devoluciones</a></li><li><a>Preguntas frecuentes</a></li></ul></div>
+  </footer>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Virginia Oficial · Todos los derechos reservados</span>
+    <span class="footer-dev">Rediseño <span>IA · LonkyDev</span></span>
+  </div>
+</div>
+
+
+<!-- ══════ PRODUCT PAGE ══════ -->
+<div id="product-page" class="page">
+  <div class="topbar">Envíos a todo el país &nbsp;·&nbsp; Minorista y Mayorista &nbsp;·&nbsp; Flores, CABA</div>
+  <nav>
+    <div class="logo" onclick="goHome()">VIRGINIA<span>.</span></div>
+    <ul class="nav-links">
+      <li><a onclick="goHome()">Inicio</a></li>
+      <li><a onclick="goShop()">Tienda</a></li>
+      <li><a onclick="goMayorista()">Mayorista</a></li>
+      <li><a onclick="goContact()">Contacto</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count-prod">0</span></button>
+      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="product-detail-container">
+    <div class="product-breadcrumb">
+      <a onclick="goHome()">Inicio</a> / <a onclick="goShop()">Premium</a> / <span id="pd-name-bread">Producto</span>
+    </div>
+    <div class="pd-grid">
+      <div class="pd-image"><img id="pd-img" src="" alt="Producto"></div>
+      <div class="pd-info">
+        <h1 id="pd-title" class="pd-title">TITULO DEL PRODUCTO</h1>
+        <div class="pd-price-wrap">
+          <span id="pd-price" class="pd-price">$0</span>
+          <span id="pd-oldprice" class="pd-oldprice"></span>
+        </div>
+        <div class="pd-desc" id="pd-desc">Descripción</div>
+        <div class="pd-options">
+          <div class="pd-option-group"><label>TALLE</label><div class="pd-chips" id="pd-sizes"></div></div>
+          <div class="pd-option-group"><label>COLOR</label><div class="pd-chips" id="pd-colors"></div></div>
+        </div>
+        <div id="pd-stock-notice" class="pd-stock-notice"></div>
+        <div class="pd-actions">
+          <div class="pd-qty">
+            <button onclick="changePdQty(-1)">-</button>
+            <input type="number" id="pd-qty-input" value="1" min="1" readonly>
+            <button onclick="changePdQty(1)">+</button>
+          </div>
+          <button class="btn-primary pd-add-btn" id="pd-add-btn" onclick="addCurrentPdToCart()">AGREGAR AL CARRITO</button>
+        </div>
+        <div class="pd-accordion">
+          <div class="pd-acc-item">
+            <button class="pd-acc-head" onclick="this.parentElement.classList.toggle('active')">INFORMACIÓN ADICIONAL <span>+</span></button>
+            <div class="pd-acc-body"><p>Calidad premium garantizada. 100% algodón con elastano. Corte oversize unisex.</p></div>
+          </div>
+          <div class="pd-acc-item">
+            <button class="pd-acc-head" onclick="this.parentElement.classList.toggle('active')">ENVÍOS Y CAMBIOS <span>+</span></button>
+            <div class="pd-acc-body"><p>Realizamos envíos a todo el país. Los cambios se realizan dentro de los 15 días de recibida la compra.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="related-section">
+      <h2 class="related-title">PRODUCTOS RELACIONADOS</h2>
+      <div class="carousel-wrap">
+        <button class="carousel-btn left" onclick="scrollCarousel(-1)">&#10094;</button>
+        <div class="related-carousel" id="related-carousel">
+          <!-- JS generates related products -->
+        </div>
+        <button class="carousel-btn right" onclick="scrollCarousel(1)">&#10095;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CHECKOUT PAGE ══════ -->
+<div id="checkout-page" class="page">
+  <div class="topbar">Envíos a todo el país &nbsp;·&nbsp; Minorista y Mayorista &nbsp;·&nbsp; Flores, CABA</div>
+  <nav>
+    <div class="logo" onclick="goHome()">VIRGINIA<span>.</span></div>
+    <ul class="nav-links">
+      <li><a onclick="goHome()">Inicio</a></li>
+      <li><a onclick="goShop()">Tienda</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count-co">0</span></button>
+      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="checkout-container">
+    <div class="checkout-grid">
+      
+      <!-- DETALLES -->
+      <div class="checkout-details">
+        <h2 class="checkout-title">DETALLES DE FACTURACIÓN</h2>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Nombre *</label><input type="text" class="form-input" id="co-name"></div>
+          <div class="form-group"><label class="form-label">Apellido *</label><input type="text" class="form-input" id="co-last"></div>
+          <div class="form-group"><label class="form-label">Provincia *</label><input type="text" class="form-input" id="co-prov"></div>
+          <div class="form-group"><label class="form-label">Localidad / Ciudad *</label><input type="text" class="form-input" id="co-city"></div>
+          <div class="form-group full"><label class="form-label">Dirección de la calle *</label><input type="text" class="form-input" id="co-addr" placeholder="Número de la casa y nombre de la calle"></div>
+          <div class="form-group"><label class="form-label">Código postal *</label><input type="text" class="form-input" id="co-zip"></div>
+          <div class="form-group"><label class="form-label">Teléfono *</label><input type="tel" class="form-input" id="co-tel"></div>
+          <div class="form-group"><label class="form-label">Número de documento *</label><input type="text" class="form-input" id="co-doc"></div>
+          <div class="form-group"><label class="form-label">Empresa de envío (Opcional)</label><input type="text" class="form-input" id="co-shipping"></div>
+          <div class="form-group"><label class="form-label">Dirección de correo electrónico</label><input type="email" class="form-input" id="co-email"></div>
+          <div class="form-group full" style="margin-top: 8px;">
+            <label class="toggle-row" style="border:none; padding:0; justify-content:flex-start; gap:12px; cursor:pointer;">
+              <label class="toggle" style="pointer-events:none;"><input type="checkbox" id="co-create-account" onchange="document.getElementById('co-pw-group').style.display=this.checked?'flex':'none'"><span class="toggle-slider"></span></label>
+              <div style="font-size:13px;color:var(--gray-light)">Crear una cuenta (opcional)</div>
+            </label>
+          </div>
+          <div class="form-group full" id="co-pw-group" style="display:none; margin-top:-8px;">
+            <label class="form-label">Contraseña para tu cuenta</label><input type="password" class="form-input" id="co-pw" placeholder="Elige una contraseña para tu nueva cuenta">
+          </div>
+          <div class="form-group full" style="margin-top: 4px;">
+            <label class="form-label">Notas del pedido (Opcional)</label><textarea class="form-textarea" id="co-notes" placeholder="Ejemplo: notas especiales para la entrega"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN -->
+      <div class="checkout-summary">
+        <h2 class="checkout-title">TU PEDIDO</h2>
+        <div class="co-order-box">
+          <div class="co-order-head"><span>Producto</span><span>Subtotal</span></div>
+          <div class="co-order-items" id="co-order-items"></div>
+          <div class="co-order-row"><span>Subtotal</span><span id="co-subtotal">$0</span></div>
+          <div class="co-order-row"><span>Envío</span><span>A acordar</span></div>
+          <div class="co-order-total"><span>Total</span><span id="co-total">$0</span></div>
+          
+          <div class="co-payment-info" style="margin-top: 16px; border-color: var(--danger); background: rgba(226,75,74,0.05);">
+            <strong style="color: var(--danger);">¡IMPORTANTE ANTES DE FINALIZAR COMPRA!</strong>
+            Al recibir el paquete se le pide al cliente hacer un video desde que se abre la encomienda mostrando las prendas y controlando la cantidad, por si hubiera algún reclamo de faltante o alguna disconformidad, caso contrario de NO hacer el video con esa especificación el reclamo NO tiene VALIDEZ.
+          </div>
+
+          <div class="co-payment-info">
+            <strong>Pago por WhatsApp</strong>
+            Una vez completado el formulario, serás redirigido a nuestro WhatsApp para coordinar el pago (transferencia, depósito o efectivo) y el método de envío.
+          </div>
+
+          <button class="btn-primary co-btn" onclick="submitCheckout()">CONFIRMAR Y ENVIAR POR WHATSAPP</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════ LOGIN ══════ -->
+<div class="login-screen hidden" id="login-screen">
+  <div class="login-box">
+    <h2>PANEL ADMIN</h2>
+    <p>Virginia Oficial — Acceso restringido</p>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Usuario</label><input class="form-input" type="text" id="login-user" placeholder="admin" autocomplete="username"></div>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Contraseña</label><input class="form-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-err" id="login-err">Usuario o contraseña incorrectos.</div>
+    <p style="font-size:11px;color:#3a3733;margin-top:16px;text-align:center">admin / virginia2026</p>
+  </div>
+</div>
+
+<!-- ══════ ADMIN ══════ -->
+<div id="admin-page" class="page admin-page">
+  <nav class="admin-nav">
+    <div class="admin-logo">VIRGINIA<span>.</span><small>Admin</small></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
+      <button class="admin-tab" onclick="switchTab('productos',this)">Productos</button>
+      <button class="admin-tab" onclick="switchTab('pedidos',this)">Pedidos</button>
+      <button class="admin-tab" onclick="switchTab('categorias',this)">Categorías</button>
+      <button class="admin-tab" onclick="switchTab('configuracion',this)">Configuración</button>
+    </div>
+    <button class="admin-exit" onclick="exitAdmin()">← Sitio</button>
+  </nav>
+  <div class="admin-content">
+
+    <!-- DASHBOARD -->
+    <div class="admin-section active" id="tab-dashboard">
+      <div class="stats-row">
+        <div class="stat-card" data-icon="📦"><div class="stat-card-label">Productos activos</div><div class="stat-card-num" id="stat-prods">0</div><div class="stat-card-sub up" id="stat-prods-sub"></div></div>
+        <div class="stat-card" data-icon="🛒"><div class="stat-card-label">Pedidos del mes</div><div class="stat-card-num">47</div><div class="stat-card-sub up">↑ +12%</div></div>
+        <div class="stat-card" data-icon="💰"><div class="stat-card-label">Ventas del mes</div><div class="stat-card-num">$842K</div><div class="stat-card-sub up">↑ +8%</div></div>
+        <div class="stat-card" data-icon="👥"><div class="stat-card-label">Clientes únicos</div><div class="stat-card-num">214</div><div class="stat-card-sub">Este mes</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+          <h3 style="font-family:var(--fd);font-size:18px;letter-spacing:.1em;margin-bottom:16px;color:var(--accent)">ÚLTIMOS PEDIDOS</h3>
+          <div class="table-scroll"><table class="admin-table" style="border:none"><thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead><tbody>
+            <tr><td style="font-family:var(--fd);color:#888">#0047</td><td>Romina G.</td><td style="color:var(--accent)">$24.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
+            <tr><td style="font-family:var(--fd);color:#888">#0046</td><td>Lucas M.</td><td style="color:var(--accent)">$5.300</td><td><span class="td-badge badge-agotado">Pendiente</span></td></tr>
+            <tr><td style="font-family:var(--fd);color:#888">#0045</td><td>Valentina P.</td><td style="color:var(--accent)">$45.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
+            <tr><td style="font-family:var(--fd);color:#888">#0044</td><td>May. Rosario</td><td style="color:var(--accent)">$98.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
+          </tbody></table></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+          <h3 style="font-family:var(--fd);font-size:18px;letter-spacing:.1em;margin-bottom:16px;color:var(--accent)">ALERTAS DE STOCK</h3>
+          <div id="stock-alerts" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div class="admin-section" id="tab-productos">
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" placeholder="Buscar producto..." oninput="renderAdminProducts()" id="search-productos">
+        <select class="admin-select" onchange="_filterCat=this.value;renderAdminProducts()"><option value="">Todas</option><option>Buzos</option><option>Remeras</option><option>Pantalones</option><option>Kids</option><option>Premium</option><option>Rústico</option><option>Combos</option></select>
+        <select class="admin-select" onchange="_filterStatus=this.value;renderAdminProducts()"><option value="">Todos</option><option value="activo">Activo</option><option value="inactivo">Inactivo</option><option value="agotado">Agotado</option></select>
+        <button class="btn-add" onclick="openModal()">+ Agregar</button>
+      </div>
+      <div class="table-scroll"><table class="admin-table"><thead><tr><th>Foto</th><th>Nombre</th><th>Cat.</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="products-table-body"></tbody></table></div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="admin-section" id="tab-pedidos">
+      <div class="admin-toolbar"><input class="admin-search" type="text" placeholder="Buscar..."><select class="admin-select"><option>Todos</option><option>Pendiente</option><option>Enviado</option><option>Cancelado</option></select></div>
+      <div class="table-scroll"><table class="admin-table"><thead><tr><th>#</th><th>Cliente</th><th>Canal</th><th>Producto</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acc.</th></tr></thead><tbody>
+        <tr><td style="font-family:var(--fd);color:#888">#0047</td><td>Romina García</td><td style="color:#777">WhatsApp</td><td>Frizado Nissmo ×2</td><td class="td-price">$24.000</td><td style="color:#555;font-size:11px">29/04/26</td><td><span class="td-badge badge-activo">Enviado</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button></div></td></tr>
+        <tr><td style="font-family:var(--fd);color:#888">#0046</td><td>Lucas Martínez</td><td style="color:#777">Instagram</td><td>Over Luna ×1</td><td class="td-price">$5.300</td><td style="color:#555;font-size:11px">28/04/26</td><td><span class="td-badge badge-agotado">Pendiente</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button><button class="btn-del">✕</button></div></td></tr>
+        <tr><td style="font-family:var(--fd);color:#888">#0045</td><td>Valentina Pérez</td><td style="color:#777">WhatsApp</td><td>Buzo Comb. ×3</td><td class="td-price">$45.000</td><td style="color:#555;font-size:11px">27/04/26</td><td><span class="td-badge badge-activo">Enviado</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button></div></td></tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="admin-section" id="tab-categorias">
+      <div class="admin-toolbar"><button class="btn-add" onclick="openCatModal()">+ Nueva categoría</button></div>
+      <div class="table-scroll"><table class="admin-table"><thead><tr><th>Categoría</th><th>Productos</th><th>Imagen</th><th>Visible</th><th>Acciones</th></tr></thead><tbody id="cat-table-body"></tbody></table></div>
+    </div>
+
+    <!-- CONFIGURACIÓN -->
+    <div class="admin-section" id="tab-configuracion">
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>NEGOCIO</h3>
+          <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" value="Virginia Oficial"></div>
+          <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" value="Azul 38, Flores, CABA"></div>
+          <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" value="+54 9 11 7605-2037"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="virginiaoficial6@gmail.com"></div>
+          <div class="form-group"><label class="form-label">Horario</label><input class="form-input" value="Lun–Sáb 10:00–18:00"></div>
+          <button class="btn-save-settings" onclick="notify('✓ Información guardada')">Guardar</button>
+        </div>
+        <div class="settings-card">
+          <h3>VENTAS Y ENVÍOS</h3>
+          <div class="form-group"><label class="form-label">Mínimo mayorista ($)</label><input class="form-input" type="number" value="50000"></div>
+          <div class="form-group"><label class="form-label">Costo de envío ($)</label><input class="form-input" type="number" value="3500"></div>
+          <div class="form-group"><label class="form-label">Envío gratis desde ($)</label><input class="form-input" type="number" value="80000"></div>
+          <div class="form-group"><label class="form-label">Plazo de despacho</label><select class="form-select"><option>24 horas hábiles</option><option>48 horas hábiles</option><option>72 horas hábiles</option></select></div>
+          <button class="btn-save-settings" onclick="notify('✓ Envíos guardados')">Guardar</button>
+        </div>
+        <div class="settings-card">
+          <h3>OPCIONES DE TIENDA</h3>
+          <div class="toggle-row"><div><div class="toggle-label">Tienda activa</div><div class="toggle-sub">Mostrar productos al público</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><div><div class="toggle-label">Venta mayorista</div><div class="toggle-sub">Mostrar sección mayorista</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><div><div class="toggle-label">Mostrar precios</div><div class="toggle-sub">Visible sin login</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><div><div class="toggle-label">Modo mantenimiento</div><div class="toggle-sub">Ocultar sitio temporalmente</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="settings-card">
+          <h3>REDES SOCIALES</h3>
+          <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" value="@virginiaoficial.ok"></div>
+          <div class="form-group"><label class="form-label">WhatsApp Link</label><input class="form-input" value="https://wa.link/d8hgwf"></div>
+          <div class="form-group"><label class="form-label">TikTok</label><input class="form-input" value="@virginiaoficial.ok"></div>
+          <div class="form-group"><label class="form-label">Facebook</label><input class="form-input" placeholder="URL de Facebook"></div>
+          <button class="btn-save-settings" onclick="notify('✓ Redes guardadas')">Guardar</button>
+        </div>
+        <div class="settings-card" style="grid-column:1/-1">
+          <h3>CAMBIAR CONTRASEÑA</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px" id="pw-grid">
+            <div class="form-group"><label class="form-label">Contraseña actual</label><input class="form-input" type="password" placeholder="••••••••"></div>
+            <div class="form-group"><label class="form-label">Nueva contraseña</label><input class="form-input" type="password" placeholder="••••••••"></div>
+            <div class="form-group"><label class="form-label">Repetir</label><input class="form-input" type="password" placeholder="••••••••"></div>
+          </div>
+          <button class="btn-save-settings" style="margin-top:14px" onclick="notify('✓ Contraseña actualizada')">Cambiar contraseña</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-backdrop" id="product-modal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title" id="modal-title">NUEVO PRODUCTO</h2><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Nombre *</label><input class="form-input" id="f-name" placeholder="Ej: Frizado Nissmo"></div>
+        <div class="form-group"><label class="form-label">Categoría *</label><select class="form-select" id="f-cat"><option value="">Seleccionar...</option><option>Buzos</option><option>Remeras</option><option>Pantalones</option><option>Kids</option><option>Premium</option><option>Rústico</option><option>Combos</option></select></div>
+        <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="f-status"><option value="activo">Activo</option><option value="inactivo">Inactivo</option><option value="agotado">Agotado</option></select></div>
+        <div class="form-group"><label class="form-label">Precio ($) *</label><input class="form-input" id="f-price" type="number" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Precio tachado ($)</label><input class="form-input" id="f-oldprice" type="number" placeholder="(opcional)"></div>
+        <div class="form-group"><label class="form-label">Stock</label><input class="form-input" id="f-stock" type="number" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Etiqueta</label><select class="form-select" id="f-badge"><option value="">Sin etiqueta</option><option value="new">Nuevo</option><option value="hot">Popular</option><option value="off">Oferta</option></select></div>
+        <div class="form-group full"><label class="form-label">Tallas disponibles</label><input class="form-input" id="f-sizes" placeholder="S, M, L, XL, XXL"></div>
+        <div class="form-group full"><label class="form-label">Colores</label><input class="form-input" id="f-colors" placeholder="Negro, Gris, Blanco..."></div>
+        <div class="form-group full"><label class="form-label">URL de imagen</label><input class="form-input" id="f-img" placeholder="https://..."></div>
+        <div class="form-group full"><label class="form-label">Descripción</label><textarea class="form-textarea" id="f-desc" placeholder="Materiales, detalles..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveProduct()">Guardar producto</button></div>
+  </div>
+</div>
+
+<!-- CAT MODAL -->
+<div class="modal-backdrop" id="cat-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header"><h2 class="modal-title">NUEVA CATEGORÍA</h2><button class="close-btn" onclick="closeCatModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px"><label class="form-label">Nombre</label><input class="form-input" id="cat-name-input" placeholder="Ej: Accesorios"></div>
+      <div class="form-group" style="margin-bottom:14px"><label class="form-label">URL imagen</label><input class="form-input" id="cat-img-input" placeholder="https://..."></div>
+      <div class="form-group"><label class="form-label">Visible en tienda</label><select class="form-select" id="cat-visible"><option value="si">Sí</option><option value="no">No</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeCatModal()">Cancelar</button><button class="btn-save" onclick="saveCat()">Guardar</button></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
