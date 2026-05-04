@@ -20,30 +20,82 @@ let categories=[
 let cart=[],editingId=null,_filterCat='',_filterStatus='';
 
 /* ── NAV ── */
-function toggleMenu(){const hb=document.getElementById('hamburger'),mm=document.getElementById('mobile-menu');hb.classList.toggle('open');mm.classList.toggle('open')}
-function closeMM(){document.getElementById('hamburger').classList.remove('open');document.getElementById('mobile-menu').classList.remove('open')}
+function toggleMenu(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.toggle('open'));document.getElementById('mobile-menu').classList.toggle('open')}
+function closeMM(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.remove('open'));document.getElementById('mobile-menu').classList.remove('open')}
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'})}
-function goHome(){if(document.getElementById('site-page').classList.contains('active')){window.scrollTo({top:0,behavior:'smooth'})}else{showPage('site-page')}closeMM()}
-function goShop(){if(!document.getElementById('site-page').classList.contains('active'))showPage('site-page');setTimeout(()=>document.getElementById('tienda').scrollIntoView({behavior:'smooth'}),60);closeMM()}
-function goMayorista(){if(!document.getElementById('site-page').classList.contains('active'))showPage('site-page');setTimeout(()=>document.getElementById('mayorista').scrollIntoView({behavior:'smooth'}),60);closeMM()}
-function goContact(){if(!document.getElementById('site-page').classList.contains('active'))showPage('site-page');setTimeout(()=>document.getElementById('contacto').scrollIntoView({behavior:'smooth'}),60);closeMM()}
+
+function goHome(){ closeMM(); if(window.location.hash==='#inicio') handleHash(); else window.location.hash='#inicio'; }
+function goShop(){ closeMM(); if(window.location.hash==='#tienda') handleHash(); else window.location.hash='#tienda'; }
+function goMayorista(){ closeMM(); if(window.location.hash==='#mayorista') handleHash(); else window.location.hash='#mayorista'; }
+function goContact(){ closeMM(); if(window.location.hash==='#contacto') handleHash(); else window.location.hash='#contacto'; }
+function goCategory(cat){ closeMM(); window.location.hash='#categoria-'+cat.toLowerCase(); }
+
+window.addEventListener('hashchange', handleHash);
+function handleHash() {
+  const h = window.location.hash;
+  const login = document.getElementById('login-screen');
+  if(login) login.classList.add('hidden');
+  if(h !== '#carrito') {
+    const cd = document.getElementById('cart-drawer'), ov = document.getElementById('overlay');
+    if(cd) cd.classList.remove('open');
+    if(ov) ov.classList.remove('show');
+    document.body.style.overflow='';
+  }
+  
+  if (h === '#admin') {
+    showPage('admin-page');
+  } else if (h === '#cuenta') {
+    showPage('user-page');
+  } else if (h === '#login') {
+    showPage('site-page');
+    if(login) login.classList.remove('hidden');
+  } else if (h.startsWith('#categoria-')) {
+    const cat = decodeURIComponent(h.replace('#categoria-', ''));
+    showPage('category-page');
+    renderCategoryPage(cat);
+  } else if (h.startsWith('#producto-')) {
+    const id = parseInt(h.replace('#producto-', ''));
+    _showProductUI(id);
+  } else if (h === '#checkout') {
+    _showCheckoutUI();
+  } else if (h === '#carrito') {
+    const cd = document.getElementById('cart-drawer'), ov = document.getElementById('overlay');
+    if(cd) cd.classList.add('open');
+    if(ov) ov.classList.add('show');
+    document.body.style.overflow='hidden';
+  } else {
+    if(!document.getElementById('site-page').classList.contains('active')) showPage('site-page');
+    if (h && document.querySelector(h)) {
+      setTimeout(() => { const el=document.querySelector(h); if(el) el.scrollIntoView({behavior:'smooth'}); }, 60);
+    } else {
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+  }
+}
 
 /* ── AUTH ── */
-function showAdmin(){closeMM();document.getElementById('login-screen').classList.remove('hidden')}
+function showAdmin(){ closeMM(); window.location.hash='#login'; }
 function doLogin(){
   const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;
-  if(u==='admin'&&p==='virginia2026'){document.getElementById('login-screen').classList.add('hidden');showPage('admin-page');renderAdminProducts();renderCategories();updateDash()}
+  if(u==='admin'&&p==='virginia2026'){
+    document.getElementById('login-screen').classList.add('hidden');
+    window.location.hash='#admin';
+    renderAdminProducts();renderCategories();updateDash();
+  }
+  else if(u && p){
+    document.getElementById('login-screen').classList.add('hidden');
+    window.location.hash='#cuenta';
+  }
   else{document.getElementById('login-err').style.display='block'}
 }
-function exitAdmin(){showPage('site-page');document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none'}
+function exitAdmin(){document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none';window.location.hash='#inicio';}
 
 /* ── TABS ── */
 function switchTab(n,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
 
 /* ── FRONTEND ── */
-function renderFrontend(){
-  const g=document.getElementById('products-grid');
-  g.innerHTML=products.filter(p=>p.status!=='inactivo').map(p=>`
+function renderProductCard(p) {
+  return `
     <div class="product-card" onclick="showProduct(${p.id})">
       <div class="product-img-wrap">
         <img src="${p.img}" alt="${p.name}" loading="lazy">
@@ -56,18 +108,28 @@ function renderFrontend(){
         <div><span class="product-price">$${Number(p.price).toLocaleString('es-AR')}</span>${p.oldprice>0?`<span class="product-price-old">$${Number(p.oldprice).toLocaleString('es-AR')}</span>`:''}</div>
         <button class="add-btn"${p.status==='agotado'?' disabled style="opacity:.35;cursor:not-allowed"':''}>${p.status==='agotado'?'Sin stock':'Agregar al carrito'}</button>
       </div>
-    </div>`).join('');
+    </div>`;
+}
+function renderFrontend(){
+  const g=document.getElementById('products-grid');
+  g.innerHTML=products.filter(p=>p.status!=='inactivo').map(renderProductCard).join('');
+}
+function renderCategoryPage(catName){
+  const catProds = products.filter(p=>p.cat.toLowerCase()===catName.toLowerCase() && p.status!=='inactivo');
+  document.getElementById('cat-page-title').textContent = catName.toUpperCase();
+  const g=document.getElementById('cat-products-grid');
+  if(catProds.length===0){
+    g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#777;font-size:14px">Próximamente nuevos ingresos en esta categoría.</div>';
+    return;
+  }
+  g.innerHTML=catProds.map(renderProductCard).join('');
 }
 
 
 /* ── CART ── */
 function updateCartUI(){
   const count = cart.reduce((a,x) => a + x.qty, 0);
-  document.getElementById('cart-count').textContent = count;
-  const countProd = document.getElementById('cart-count-prod');
-  if(countProd) countProd.textContent = count;
-  const countCo = document.getElementById('cart-count-co');
-  if(countCo) countCo.textContent = count;
+  document.querySelectorAll('.cart-count').forEach(el => el.textContent = count);
   
   const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
   document.getElementById('cart-total-num').textContent = '$' + total.toLocaleString('es-AR');
@@ -106,8 +168,16 @@ function removeFromCart(cartItemId){
   }
 }
 
-function openCart(){document.getElementById('cart-drawer').classList.add('open');document.getElementById('overlay').classList.add('show');document.body.style.overflow='hidden'}
-function closeCart(){document.getElementById('cart-drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show');document.body.style.overflow=''}
+function openCart(){ window.location.hash = '#carrito'; }
+function closeCart(){ 
+  if(window.location.hash === '#carrito') history.back(); 
+  else {
+    const cd = document.getElementById('cart-drawer'), ov = document.getElementById('overlay');
+    if(cd) cd.classList.remove('open');
+    if(ov) ov.classList.remove('show');
+    document.body.style.overflow='';
+  }
+}
 
 function goCheckout() {
   if(!cart.length){notify('El carrito está vacío');return}
@@ -124,8 +194,11 @@ function goCheckout() {
     return;
   }
   
-  closeCart();
-  
+  window.location.hash = '#checkout';
+}
+
+function _showCheckoutUI() {
+  const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
   const el = document.getElementById('co-order-items');
   el.innerHTML = cart.map(x => `
     <div class="co-item-row">
@@ -173,8 +246,11 @@ function submitCheckout() {
 /* ── PRODUCT PAGE ── */
 let currentPd = null;
 function showProduct(id) {
+  window.location.hash = '#producto-' + id;
+}
+function _showProductUI(id) {
   const p = products.find(x => x.id === id);
-  if(!p) return;
+  if(!p) { window.location.hash = '#inicio'; return; }
   currentPd = p;
   
   document.getElementById('pd-name-bread').textContent = p.name;
@@ -390,4 +466,4 @@ let _nt=null;
 function notify(msg){clearTimeout(_nt);const n=document.getElementById('notif');n.textContent=msg;n.classList.add('show');_nt=setTimeout(()=>n.classList.remove('show'),2600)}
 
 /* ── INIT ── */
-renderFrontend();updateCartUI();
+renderFrontend();updateCartUI();handleHash();

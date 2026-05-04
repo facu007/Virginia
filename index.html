@@ -38,7 +38,7 @@
   <a onclick="goShop()">👕 Tienda</a>
   <a onclick="goMayorista()">📦 Info Mayorista</a>
   <a onclick="goContact()">📍 Contacto</a>
-  <a class="mm-admin" onclick="showAdmin()">⚙️ Administrador</a>
+  <a class="mm-admin" onclick="showAdmin()">👤 Iniciar sesión</a>
 </div>
 
 <!-- ══════ SITE ══════ -->
@@ -53,9 +53,9 @@
       <li><a onclick="goContact()">Contacto</a></li>
     </ul>
     <div class="nav-right">
-      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count">0</span></button>
-      <button class="nav-btn" onclick="showAdmin()">Admin</button>
-      <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count">0</span></button>
+      <button class="nav-btn" onclick="showAdmin()">Iniciar sesión</button>
+      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
@@ -91,10 +91,10 @@
   <section class="section">
     <div class="section-header"><h2 class="section-title">CATEGORÍAS</h2><a class="section-link" onclick="goShop()">Ver todo →</a></div>
     <div class="cat-grid">
-      <div class="cat-card" onclick="goShop()"><img src="img/DSC06907-scaled.jpg" alt="Buzos" loading="lazy"><div class="cat-overlay"><div class="cat-name">BUZOS</div><div class="cat-count">Frizado · Over · Combinado</div></div></div>
-      <div class="cat-card" onclick="goShop()"><img src="img/DSC06925-scaled.jpg" alt="Remeras" loading="lazy"><div class="cat-overlay"><div class="cat-name">REMERAS</div><div class="cat-count">Boxy · Musculosa · Pupera</div></div></div>
-      <div class="cat-card" onclick="goShop()"><img src="img/IMG-20260408-WA0124-scaled.jpg" alt="Premium" loading="lazy"><div class="cat-overlay"><div class="cat-name">PREMIUM</div><div class="cat-count">Drop exclusivo</div></div></div>
-      <div class="cat-card" onclick="goShop()"><img src="img/inbound4468380888781350918-601x800.jpg" alt="Pantalones" loading="lazy"><div class="cat-overlay"><div class="cat-name">PANTALONES</div><div class="cat-count">Colección otoño</div></div></div>
+      <div class="cat-card" onclick="goCategory('Buzos')"><img src="img/DSC06907-scaled.jpg" alt="Buzos" loading="lazy"><div class="cat-overlay"><div class="cat-name">BUZOS</div><div class="cat-count">Frizado · Over · Combinado</div></div></div>
+      <div class="cat-card" onclick="goCategory('Remeras')"><img src="img/DSC06925-scaled.jpg" alt="Remeras" loading="lazy"><div class="cat-overlay"><div class="cat-name">REMERAS</div><div class="cat-count">Boxy · Musculosa · Pupera</div></div></div>
+      <div class="cat-card" onclick="goCategory('Premium')"><img src="img/IMG-20260408-WA0124-scaled.jpg" alt="Premium" loading="lazy"><div class="cat-overlay"><div class="cat-name">PREMIUM</div><div class="cat-count">Drop exclusivo</div></div></div>
+      <div class="cat-card" onclick="goCategory('Pantalones')"><img src="img/inbound4468380888781350918-601x800.jpg" alt="Pantalones" loading="lazy"><div class="cat-overlay"><div class="cat-name">PANTALONES</div><div class="cat-count">Colección otoño</div></div></div>
     </div>
   </section>
 
@@ -135,7 +135,7 @@
       </div>
     </div>
     <div class="footer-col"><h4>Navegación</h4><ul><li><a onclick="goHome()">Inicio</a></li><li><a onclick="goShop()">Tienda</a></li><li><a onclick="goMayorista()">Mayorista</a></li><li><a onclick="goContact()">Contacto</a></li></ul></div>
-    <div class="footer-col"><h4>Categorías</h4><ul><li><a>Buzos</a></li><li><a>Remeras</a></li><li><a>Pantalones</a></li><li><a>Kids</a></li><li><a>Combos</a></li><li><a>Rústico</a></li></ul></div>
+    <div class="footer-col"><h4>Categorías</h4><ul><li><a onclick="goCategory('Buzos')">Buzos</a></li><li><a onclick="goCategory('Remeras')">Remeras</a></li><li><a onclick="goCategory('Pantalones')">Pantalones</a></li><li><a onclick="goCategory('Kids')">Kids</a></li><li><a onclick="goCategory('Combos')">Combos</a></li><li><a onclick="goCategory('Rústico')">Rústico</a></li></ul></div>
     <div class="footer-col"><h4>Ayuda</h4><ul><li><a>Cómo comprar</a></li><li><a>Envíos</a></li><li><a>Cambios y devoluciones</a></li><li><a>Preguntas frecuentes</a></li></ul></div>
   </footer>
   <div class="footer-bottom">
@@ -144,6 +144,51 @@
   </div>
 </div>
 
+<!-- ══════ CATEGORY PAGE ══════ -->
+<div id="category-page" class="page">
+  <div class="topbar">Envíos a todo el país &nbsp;·&nbsp; Minorista y Mayorista &nbsp;·&nbsp; Flores, CABA</div>
+  <nav>
+    <div class="logo" onclick="goHome()">VIRGINIA<span>.</span></div>
+    <ul class="nav-links">
+      <li><a onclick="goHome()">Inicio</a></li>
+      <li><a onclick="goShop()">Tienda</a></li>
+      <li><a onclick="goMayorista()">Mayorista</a></li>
+      <li><a onclick="goContact()">Contacto</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count">0</span></button>
+      <button class="nav-btn" onclick="showAdmin()">Iniciar sesión</button>
+      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <section class="section" style="min-height: 70vh; padding-top: 40px;">
+    <div class="section-header" style="margin-bottom: 30px;">
+      <h2 class="section-title" id="cat-page-title" style="font-size: 52px;">CATEGORÍA</h2>
+      <a class="section-link" onclick="history.back()" style="font-size: 12px;">← Volver al inicio</a>
+    </div>
+    <div class="products-grid" id="cat-products-grid"></div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="logo">VIRGINIA<span style="color:var(--accent)">.</span></span>
+      <p class="footer-desc">Fabricantes de indumentaria urbana desde Flores, Buenos Aires. Calidad garantizada sin intermediarios.</p>
+      <div class="social-links">
+        <a class="social-btn" href="https://www.instagram.com/virginiaoficial.ok/" target="_blank">IG</a>
+        <a class="social-btn" href="https://wa.link/d8hgwf" target="_blank">WA</a>
+        <a class="social-btn" href="https://www.tiktok.com/@virginiaoficial.ok" target="_blank">TT</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Navegación</h4><ul><li><a onclick="goHome()">Inicio</a></li><li><a onclick="goShop()">Tienda</a></li><li><a onclick="goMayorista()">Mayorista</a></li><li><a onclick="goContact()">Contacto</a></li></ul></div>
+    <div class="footer-col"><h4>Categorías</h4><ul><li><a onclick="goCategory('Buzos')">Buzos</a></li><li><a onclick="goCategory('Remeras')">Remeras</a></li><li><a onclick="goCategory('Pantalones')">Pantalones</a></li><li><a onclick="goCategory('Kids')">Kids</a></li><li><a onclick="goCategory('Combos')">Combos</a></li><li><a onclick="goCategory('Rústico')">Rústico</a></li></ul></div>
+    <div class="footer-col"><h4>Ayuda</h4><ul><li><a>Cómo comprar</a></li><li><a>Envíos</a></li><li><a>Cambios y devoluciones</a></li><li><a>Preguntas frecuentes</a></li></ul></div>
+  </footer>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Virginia Oficial · Todos los derechos reservados</span>
+    <span class="footer-dev">Rediseño <span>IA · LonkyDev</span></span>
+  </div>
+</div>
 
 <!-- ══════ PRODUCT PAGE ══════ -->
 <div id="product-page" class="page">
@@ -157,7 +202,7 @@
       <li><a onclick="goContact()">Contacto</a></li>
     </ul>
     <div class="nav-right">
-      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count-prod">0</span></button>
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count">0</span></button>
       <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -224,7 +269,7 @@
       <li><a onclick="goShop()">Tienda</a></li>
     </ul>
     <div class="nav-right">
-      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count" id="cart-count-co">0</span></button>
+      <button class="nav-cart" onclick="openCart()">🛒 <span class="cart-count">0</span></button>
       <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -292,13 +337,34 @@
 <!-- ══════ LOGIN ══════ -->
 <div class="login-screen hidden" id="login-screen">
   <div class="login-box">
-    <h2>PANEL ADMIN</h2>
-    <p>Virginia Oficial — Acceso restringido</p>
-    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Usuario</label><input class="form-input" type="text" id="login-user" placeholder="admin" autocomplete="username"></div>
+    <h2>INICIAR SESIÓN</h2>
+    <p>Ingresá a tu cuenta o panel administrativo</p>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Usuario o Email</label><input class="form-input" type="text" id="login-user" placeholder="Tu usuario o email" autocomplete="username"></div>
     <div class="form-group" style="margin-bottom:12px"><label class="form-label">Contraseña</label><input class="form-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" onclick="doLogin()">Ingresar</button>
     <div class="login-err" id="login-err">Usuario o contraseña incorrectos.</div>
-    <p style="font-size:11px;color:#3a3733;margin-top:16px;text-align:center">admin / virginia2026</p>
+    <p style="font-size:11px;color:#3a3733;margin-top:16px;text-align:center">admin: admin / virginia2026</p>
+  </div>
+</div>
+
+<!-- ══════ USER PAGE ══════ -->
+<div id="user-page" class="page admin-page">
+  <nav class="admin-nav">
+    <div class="admin-logo">VIRGINIA<span>.</span><small>Cuenta</small></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active">Mi Perfil</button>
+      <button class="admin-tab">Mis Pedidos</button>
+    </div>
+    <button class="admin-exit" onclick="exitAdmin()">← Salir</button>
+  </nav>
+  <div class="admin-content">
+    <div class="admin-section active">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:40px 24px;text-align:center;border-radius:4px;">
+        <h2 style="font-family:var(--fd);letter-spacing:.1em;color:var(--accent);margin-bottom:12px;font-size:24px">¡HOLA!</h2>
+        <p style="color:#888;margin-bottom:24px">Bienvenido a tu panel de usuario. Acá vas a poder ver el estado de tus compras y configurar tus datos próximamente.</p>
+        <button class="btn-primary" onclick="goShop()" style="max-width:200px">Ir a la tienda</button>
+      </div>
+    </div>
   </div>
 </div>
 
