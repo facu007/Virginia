@@ -1,33 +1,41 @@
-let products=[
-  {id:1,name:'Over M/L Capicua',cat:'Remeras',price:7500,oldprice:0,stock:24,status:'activo',badge:'new',sizes:'S,M,L,XL',colors:'Negro,Blanco,Gris',desc:'Remera over con estampado capicúa. 100% algodón.',img:'img/DSC06907-scaled.jpg'},
-  {id:2,name:'Over Luna',cat:'Remeras',price:5300,oldprice:0,stock:18,status:'activo',badge:'hot',sizes:'S,M,L',colors:'Negro,Bordó',desc:'Remera over con bordado luna.',img:'img/DSC06925-scaled.jpg'},
-  {id:3,name:'Frizado Nissmo',cat:'Buzos',price:12000,oldprice:0,stock:9,status:'activo',badge:'',sizes:'S,M,L,XL,XXL',colors:'Negro,Azul',desc:'Buzo frizado interior cálido.',img:'img/IMG-20260408-WA0124-scaled.jpg'},
-  {id:4,name:'Frizado Oni 2.0',cat:'Buzos',price:13500,oldprice:15000,stock:14,status:'activo',badge:'new',sizes:'M,L,XL',colors:'Negro,Gris',desc:'Segunda versión del Oni.',img:'img/inbound4468380888781350918-601x800.jpg'},
-  {id:5,name:'Frizado Three 2.0',cat:'Buzos',price:13500,oldprice:0,stock:6,status:'activo',badge:'',sizes:'M,L,XL',colors:'Negro',desc:'Buzo frizado edición Three 2.0.',img:'img/inbound4849073990589537579.jpg'},
-  {id:6,name:'Buzo Combinado *7*',cat:'Buzos',price:15000,oldprice:0,stock:0,status:'agotado',badge:'',sizes:'S,M,L,XL',colors:'Negro/Gris',desc:'Buzo combinado bicolor.',img:'img/virginia-125-1-scaled.jpg'},
-  {id:7,name:'Buzo Over Seize',cat:'Buzos',price:14000,oldprice:0,stock:11,status:'activo',badge:'',sizes:'L,XL,XXL',colors:'Blanco,Negro',desc:'Buzo oversize.',img:'img/WhatsApp-Image-2025-02-19-at-08.51.17.jpeg'},
-  {id:8,name:'Frizado Honda 2.0',cat:'Buzos',price:13500,oldprice:0,stock:3,status:'activo',badge:'',sizes:'M,L,XL',colors:'Negro,Rojo',desc:'Frizado Honda Motorsport.',img:'img/WhatsApp-Image-2025-04-03-at-12.23.29-1.jpeg'},
-];
-let categories=[
-  {id:1,name:'Buzos',img:'img/WhatsApp-Image-2025-06-30-at-10.16.49.jpeg',visible:'si'},
-  {id:2,name:'Remeras',img:'img/WhatsApp-Image-2026-04-03-at-14.45.59.jpeg',visible:'si'},
-  {id:3,name:'Pantalones',img:'img/WhatsApp-Image-2026-04-30-at-15.19.27-1.jpeg',visible:'si'},
-  {id:4,name:'Kids',img:'img/DSC06907-scaled.jpg',visible:'si'},
-  {id:5,name:'Premium',img:'img/DSC06925-scaled.jpg',visible:'si'},
-  {id:6,name:'Rústico',img:'img/IMG-20260408-WA0124-scaled.jpg',visible:'si'},
-  {id:7,name:'Combos',img:'img/inbound4468380888781350918-601x800.jpg',visible:'si'},
-];
+/* ═══ SUPABASE ═══ */
+const SUPABASE_URL='https://fnqqpihplrybawdfwvam.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZucXFwaWhwbHJ5YmF3ZGZ3dmFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjE5NjEsImV4cCI6MjA5MzQ5Nzk2MX0.VYjxNvQ9RiWM3GB-94rBqdMq17koKh9spcapWCyVnN4';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let products=[],categories=[];
 let cart=[],editingId=null,_filterCat='',_filterStatus='';
+let currentUser=null;
+let _adminPass=null; // stored in memory only during admin session
+
+/* Helper: map Supabase product row to local format */
+function mapProduct(r){return{id:r.id,name:r.name,cat:r.cat,price:Number(r.price),oldprice:Number(r.oldprice||0),stock:r.stock||0,status:r.status||'activo',badge:r.badge||'',sizes:r.sizes||'',colors:r.colors||'',desc:r.description||'',img:r.img||''}}
+function mapCategory(r){return{id:r.id,name:r.name,img:r.img||'',visible:r.visible||'si'}}
+
+async function loadProducts(){
+  const{data,error}=await sb.from('products').select('*').order('id');
+  if(!error&&data)products=data.map(mapProduct);
+}
+async function loadCategories(){
+  const{data,error}=await sb.from('categories').select('*').order('id');
+  if(!error&&data)categories=data.map(mapCategory);
+}
 
 /* ── NAV ── */
-function toggleMenu(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.toggle('open'));document.getElementById('mobile-menu').classList.toggle('open')}
+function toggleMenu(){
+  document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.toggle('open'));
+  const mm=document.getElementById('mobile-menu');
+  const nav=mm.closest('.page')?.querySelector('nav')||document.querySelector('.page.active nav')||document.querySelector('nav');
+  if(nav){mm.style.top=nav.getBoundingClientRect().bottom+'px';}
+  mm.classList.toggle('open');
+}
 function closeMM(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.remove('open'));document.getElementById('mobile-menu').classList.remove('open')}
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'})}
 
 function goHome(){ closeMM(); if(window.location.hash==='#inicio') handleHash(); else window.location.hash='#inicio'; }
 function goShop(){ closeMM(); if(window.location.hash==='#tienda') handleHash(); else window.location.hash='#tienda'; }
-function goMayorista(){ closeMM(); if(window.location.hash==='#mayorista') handleHash(); else window.location.hash='#mayorista'; }
-function goContact(){ closeMM(); if(window.location.hash==='#contacto') handleHash(); else window.location.hash='#contacto'; }
+function goMayorista(){ closeMM(); if(window.location.hash==='#info-mayorista') handleHash(); else window.location.hash='#info-mayorista'; }
+function goContact(){ closeMM(); if(window.location.hash==='#contacto-page') handleHash(); else window.location.hash='#contacto-page'; }
 function goCategory(cat){ closeMM(); window.location.hash='#categoria-'+cat.toLowerCase(); }
 
 window.addEventListener('hashchange', handleHash);
@@ -46,9 +54,14 @@ function handleHash() {
     showPage('admin-page');
   } else if (h === '#cuenta') {
     showPage('user-page');
+    renderUserProfile();
   } else if (h === '#login') {
     showPage('site-page');
     if(login) login.classList.remove('hidden');
+  } else if (h === '#info-mayorista') {
+    showPage('mayorista-page');
+  } else if (h === '#contacto-page') {
+    showPage('contact-page');
   } else if (h.startsWith('#categoria-')) {
     const cat = decodeURIComponent(h.replace('#categoria-', ''));
     showPage('category-page');
@@ -75,23 +88,123 @@ function handleHash() {
 
 /* ── AUTH ── */
 function showAdmin(){ closeMM(); window.location.hash='#login'; }
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;
-  if(u==='admin'&&p==='virginia2026'){
+  if(!u||!p){document.getElementById('login-err').style.display='block';return;}
+  
+  // Login seguro via RPC (password se verifica en el servidor)
+  const{data,error}=await sb.rpc('login_user',{p_username:u,p_password:p});
+  
+  if(error){notify('⚠ Error de conexión');return;}
+  
+  if(data && data.ok){
+    currentUser={id:data.id,username:data.username,isAdmin:data.is_admin,profile:{name:data.name||'',last:data.last_name||'',prov:data.prov||'',city:data.city||'',addr:data.addr||'',zip:data.zip||'',tel:data.tel||'',doc:data.doc||'',shipping:data.shipping||'',email:data.email||''}};
+    currentUser._pw=p; // password in memory for profile updates
+    if(data.is_admin) _adminPass=p;
     document.getElementById('login-screen').classList.add('hidden');
-    window.location.hash='#admin';
-    renderAdminProducts();renderCategories();updateDash();
+    if(data.is_admin){window.location.hash='#admin';renderAdminProducts();renderCategories();updateDash();}
+    else{window.location.hash='#cuenta';notify('✓ Bienvenido, '+u);}
+  } else if(data && data.reason==='not_found'){
+    // Registrar nuevo usuario via RPC
+    const{data:reg}=await sb.rpc('register_user',{p_username:u,p_password:p});
+    if(reg && reg.ok){
+      currentUser={id:reg.id,username:reg.username,isAdmin:false,profile:{},_pw:p};
+      document.getElementById('login-screen').classList.add('hidden');
+      window.location.hash='#cuenta';
+      notify('✓ Cuenta creada. Bienvenido, '+u);
+    } else {
+      notify('⚠ Error al crear cuenta');
+    }
+  } else {
+    document.getElementById('login-err').style.display='block';
   }
-  else if(u && p){
-    document.getElementById('login-screen').classList.add('hidden');
-    window.location.hash='#cuenta';
-  }
-  else{document.getElementById('login-err').style.display='block'}
 }
-function exitAdmin(){document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none';window.location.hash='#inicio';}
+function exitAdmin(){document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none';currentUser=null;_adminPass=null;window.location.hash='#inicio';}
 
 /* ── TABS ── */
 function switchTab(n,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
+
+/* ── USER PANEL ── */
+function switchUserTab(n,btn){
+  document.querySelectorAll('#user-page .admin-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#user-page .admin-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('utab-'+n).classList.add('active');
+  if(n==='pedidos') loadUserOrders();
+}
+
+function renderUserProfile(){
+  if(!currentUser) return;
+  const p=currentUser.profile||{};
+  document.getElementById('up-username').textContent=currentUser.username;
+  document.getElementById('up-name').value=p.name||'';
+  document.getElementById('up-last').value=p.last||'';
+  document.getElementById('up-email').value=p.email||'';
+  document.getElementById('up-tel').value=p.tel||'';
+  document.getElementById('up-doc').value=p.doc||'';
+  document.getElementById('up-prov').value=p.prov||'';
+  document.getElementById('up-city').value=p.city||'';
+  document.getElementById('up-zip').value=p.zip||'';
+  document.getElementById('up-addr').value=p.addr||'';
+  document.getElementById('up-shipping').value=p.shipping||'';
+}
+
+async function saveUserProfile(){
+  if(!currentUser||!currentUser._pw){notify('⚠ Sesión no válida');return;}
+  const data={
+    p_user_id:currentUser.id, p_password:currentUser._pw,
+    p_name:document.getElementById('up-name').value.trim(),
+    p_last_name:document.getElementById('up-last').value.trim(),
+    p_email:document.getElementById('up-email').value.trim(),
+    p_tel:document.getElementById('up-tel').value.trim(),
+    p_doc:document.getElementById('up-doc').value.trim(),
+    p_prov:document.getElementById('up-prov').value.trim(),
+    p_city:document.getElementById('up-city').value.trim(),
+    p_zip:document.getElementById('up-zip').value.trim(),
+    p_addr:document.getElementById('up-addr').value.trim(),
+    p_shipping:document.getElementById('up-shipping').value.trim()
+  };
+  const{data:res}=await sb.rpc('update_profile',data);
+  if(res&&res.ok){
+    currentUser.profile={name:data.p_name,last:data.p_last_name,email:data.p_email,tel:data.p_tel,doc:data.p_doc,prov:data.p_prov,city:data.p_city,zip:data.p_zip,addr:data.p_addr,shipping:data.p_shipping};
+    notify('✓ Datos guardados correctamente');
+  } else {
+    notify('⚠ Error al guardar');
+  }
+}
+
+async function loadUserOrders(){
+  if(!currentUser||!currentUser._pw) return;
+  const el=document.getElementById('user-orders-list');
+  el.innerHTML='<div style="text-align:center;color:#555;padding:30px;font-size:13px">Cargando...</div>';
+  const{data}=await sb.rpc('get_my_orders',{p_user_id:currentUser.id,p_password:currentUser._pw});
+  if(!data||!data.ok||!data.orders||data.orders.length===0){
+    el.innerHTML='<div style="text-align:center;color:#555;padding:40px;font-size:13px">Todavía no tenés pedidos.<br><br><button class="btn-primary" onclick="goShop()" style="max-width:200px">Ir a la tienda</button></div>';
+    document.getElementById('up-order-count').textContent='0';
+    return;
+  }
+  document.getElementById('up-order-count').textContent=data.orders.length;
+  el.innerHTML=data.orders.map(o=>{
+    const date=new Date(o.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'});
+    const statusClass=o.status==='enviado'?'badge-activo':o.status==='pendiente'?'badge-agotado':'badge-inactivo';
+    const statusText=o.status.charAt(0).toUpperCase()+o.status.slice(1);
+    const items=(o.items||[]).map(i=>`<div style="font-size:11px;color:#888;padding:2px 0">• ${i.name} ${i.size?'(T:'+i.size+')':''} ${i.color?'(C:'+i.color+')':''} ×${i.qty} — $${(i.price*i.qty).toLocaleString('es-AR')}</div>`).join('');
+    return `<div style="background:var(--bg);border:1px solid var(--border);padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <span style="font-family:var(--fd);color:var(--accent);letter-spacing:.08em;font-size:16px">PEDIDO #${o.id}</span>
+          <span style="font-size:11px;color:#555;margin-left:12px">${date}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="td-badge ${statusClass}">${statusText}</span>
+          <span style="font-family:var(--fd);color:var(--accent);font-size:18px;letter-spacing:.05em">$${Number(o.total).toLocaleString('es-AR')}</span>
+        </div>
+      </div>
+      ${o.shipping_company?'<div style="font-size:11px;color:#666;margin-bottom:8px">🚚 '+o.shipping_company+'</div>':''}
+      <div style="border-top:1px solid var(--border);padding-top:10px">${items}</div>
+    </div>`;
+  }).join('');
+}
 
 /* ── FRONTEND ── */
 function renderProductCard(p) {
@@ -182,8 +295,8 @@ function closeCart(){
 function goCheckout() {
   if(!cart.length){notify('El carrito está vacío');return}
   const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
-  if(total < 50000){
-    notify('⚠ El pedido mínimo es de $50.000');
+  if(total < 150000){
+    notify('⚠ El pedido mínimo es de $150.000');
     const el = document.getElementById('cart-total-num');
     if(el) {
       el.style.color = 'var(--danger)';
@@ -209,6 +322,17 @@ function _showCheckoutUI() {
   
   document.getElementById('co-subtotal').textContent = '$' + total.toLocaleString('es-AR');
   document.getElementById('co-total').textContent = '$' + total.toLocaleString('es-AR');
+  
+  // Auto-fill from user profile
+  if(currentUser && currentUser.profile) {
+    const p = currentUser.profile;
+    const fields = {name:'co-name',last:'co-last',prov:'co-prov',city:'co-city',addr:'co-addr',zip:'co-zip',tel:'co-tel',doc:'co-doc',shipping:'co-shipping',email:'co-email'};
+    for(const [key, id] of Object.entries(fields)) {
+      const input = document.getElementById(id);
+      if(input && p[key]) input.value = p[key];
+    }
+    if(Object.keys(p).length > 0) notify('✓ Datos completados desde tu cuenta');
+  }
   
   showPage('checkout-page');
   window.scrollTo({top:0, behavior:'smooth'});
@@ -239,6 +363,47 @@ function submitCheckout() {
   if(notes) msg += `\nNotas: ${notes}`;
   
   msg += `\n\n*TU PEDIDO*\n${items}\n\n*TOTAL: $${total.toLocaleString('es-AR')}*\n\nEspero confirmación para coordinar el pago. Gracias!`;
+  
+  const emailVal = document.getElementById('co-email').value.trim();
+  
+  // Save profile via RPC (password verified server-side)
+  if(currentUser && !currentUser.isAdmin && currentUser._pw) {
+    currentUser.profile = {name:n, last:l, prov, city, addr, zip, tel, doc, shipping, email:emailVal};
+    sb.rpc('update_profile',{p_user_id:currentUser.id,p_password:currentUser._pw,p_name:n,p_last_name:l,p_prov:prov,p_city:city,p_addr:addr,p_zip:zip,p_tel:tel,p_doc:doc,p_shipping:shipping,p_email:emailVal}).then();
+  }
+  
+  // Create account via RPC
+  const createAcct = document.getElementById('co-create-account');
+  const pw = document.getElementById('co-pw').value;
+  if(createAcct && createAcct.checked && pw && !currentUser) {
+    const username = emailVal || (n + ' ' + l);
+    sb.rpc('register_user',{p_username:username,p_password:pw}).then(({data})=>{
+      if(data && data.ok){
+        currentUser={id:data.id,username:data.username,isAdmin:false,_pw:pw,profile:{name:n,last:l,prov,city,addr,zip,tel,doc,shipping,email:emailVal}};
+        sb.rpc('update_profile',{p_user_id:data.id,p_password:pw,p_name:n,p_last_name:l,p_prov:prov,p_city:city,p_addr:addr,p_zip:zip,p_tel:tel,p_doc:doc,p_shipping:shipping,p_email:emailVal}).then();
+        notify('✓ Cuenta creada');
+      }
+    });
+  }
+  
+  // Save order to Supabase (INSERT allowed by RLS)
+  const orderData = {
+    user_id: currentUser && !currentUser.isAdmin ? currentUser.id : null,
+    items: cart.map(x=>({id:x.id,name:x.name,size:x.selectedSize,color:x.selectedColor,qty:x.qty,price:x.price})),
+    total,
+    status: 'pendiente',
+    customer_name: n+' '+l,
+    customer_tel: tel,
+    customer_addr: addr,
+    customer_prov: prov,
+    customer_city: city,
+    customer_zip: zip,
+    customer_doc: doc,
+    customer_email: emailVal,
+    shipping_company: shipping,
+    notes
+  };
+  sb.from('orders').insert(orderData).then();
   
   window.open(`https://wa.me/5491176052037?text=${encodeURIComponent(msg)}`,'_blank');
 }
@@ -352,6 +517,35 @@ function changePdQty(delta) {
   const input = document.getElementById('pd-qty-input');
   let val = parseInt(input.value) + delta;
   if(val < 1) val = 1;
+  if(currentPd) {
+    const sizeChip = document.querySelector('#pd-sizes .pd-chip.selected');
+    const colorChip = document.querySelector('#pd-colors .pd-chip.selected');
+    if(sizeChip && colorChip) {
+      let s = currentPd.stock;
+      if(s > 5) {
+        const hash = (sizeChip.textContent.length * 3) + (colorChip.textContent.length * 7);
+        s = Math.max(1, s - (hash % 5));
+      }
+      const cartItemId = currentPd.id + '_' + sizeChip.textContent + '_' + colorChip.textContent;
+      const ex = cart.find(x => x.cartItemId === cartItemId);
+      const inCart = ex ? ex.qty : 0;
+      if(val > s - inCart) {
+        val = Math.max(1, s - inCart);
+        const notice = document.getElementById('pd-stock-notice');
+        if(s - inCart <= 0) {
+          notice.textContent = `⚠ Ya tenés todas las unidades en el carrito (${s})`;
+        } else {
+          notice.textContent = `⚠ Máximo disponible para agregar: ${s - inCart}`;
+        }
+        notice.className = 'pd-stock-notice error';
+        notice.style.transform = 'translateX(5px)';
+        setTimeout(()=>notice.style.transform = 'translateX(-5px)', 100);
+        setTimeout(()=>notice.style.transform = 'translateX(0)', 200);
+      } else {
+        updateStockNotice();
+      }
+    }
+  }
   input.value = val;
 }
 
@@ -376,8 +570,30 @@ function addCurrentPdToCart() {
   const size = sizeChip.textContent;
   const color = colorChip.textContent;
   
+  let s = currentPd.stock;
+  if(s > 5) {
+    const hash = (size.length * 3) + (color.length * 7);
+    s = Math.max(1, s - (hash % 5));
+  }
+  
   const cartItemId = currentPd.id + '_' + size + '_' + color;
   const ex = cart.find(x => x.cartItemId === cartItemId);
+  const inCart = ex ? ex.qty : 0;
+  
+  if(qty > s - inCart) {
+    const notice = document.getElementById('pd-stock-notice');
+    if(s - inCart <= 0) {
+      notice.textContent = `⚠ Ya tenés todas las unidades disponibles en el carrito (${s})`;
+    } else {
+      notice.textContent = `⚠ Solo podés agregar ${s - inCart} unidad(es) más (ya hay ${inCart} en tu carrito)`;
+    }
+    notice.className = 'pd-stock-notice error';
+    notice.style.transform = 'translateX(5px)';
+    setTimeout(()=>notice.style.transform = 'translateX(-5px)', 100);
+    setTimeout(()=>notice.style.transform = 'translateX(0)', 200);
+    return;
+  }
+  
   if(ex) {
     ex.qty += qty;
   } else {
@@ -424,15 +640,35 @@ function openModal(p=null){
 }
 function editProduct(id){openModal(products.find(p=>p.id===id))}
 function closeModal(){document.getElementById('product-modal').classList.remove('show');editingId=null}
-function saveProduct(){
+async function saveProduct(){
+  if(!_adminPass){notify('⚠ Sesión de admin no válida');return;}
   const name=document.getElementById('f-name').value.trim(),cat=document.getElementById('f-cat').value,price=Number(document.getElementById('f-price').value);
   if(!name||!cat||!price){notify('⚠ Completá nombre, categoría y precio');return}
-  const data={name,cat,price,oldprice:Number(document.getElementById('f-oldprice').value)||0,stock:Number(document.getElementById('f-stock').value)||0,status:document.getElementById('f-status').value,badge:document.getElementById('f-badge').value,sizes:document.getElementById('f-sizes').value,colors:document.getElementById('f-colors').value,img:document.getElementById('f-img').value||'img/inbound4849073990589537579.jpg',desc:document.getElementById('f-desc').value};
-  if(editingId){const i=products.findIndex(p=>p.id===editingId);products[i]={...products[i],...data};notify('✓ Producto actualizado')}
-  else{data.id=Date.now();products.push(data);notify('✓ Producto agregado')}
+  const{data,error}=await sb.rpc('admin_save_product',{
+    p_admin_pass:_adminPass,
+    p_id:editingId||null,
+    p_name:name,p_cat:cat,p_price:price,
+    p_oldprice:Number(document.getElementById('f-oldprice').value)||0,
+    p_stock:Number(document.getElementById('f-stock').value)||0,
+    p_status:document.getElementById('f-status').value,
+    p_badge:document.getElementById('f-badge').value,
+    p_sizes:document.getElementById('f-sizes').value,
+    p_colors:document.getElementById('f-colors').value,
+    p_img:document.getElementById('f-img').value||'img/inbound4849073990589537579.jpg',
+    p_description:document.getElementById('f-desc').value
+  });
+  if(error||!data||!data.ok){notify('⚠ Error: acceso denegado');return;}
+  notify(data.action==='updated'?'✓ Producto actualizado':'✓ Producto agregado');
+  await loadProducts();
   closeModal();renderAdminProducts();
 }
-function deleteProduct(id){if(!confirm('¿Eliminar este producto?'))return;products=products.filter(p=>p.id!==id);renderAdminProducts();notify('✓ Eliminado')}
+async function deleteProduct(id){
+  if(!_adminPass){notify('⚠ Sesión no válida');return;}
+  if(!confirm('¿Eliminar este producto?'))return;
+  const{data}=await sb.rpc('admin_delete_product',{p_admin_pass:_adminPass,p_id:id});
+  if(!data||!data.ok){notify('⚠ Acceso denegado');return;}
+  await loadProducts();renderAdminProducts();notify('✓ Eliminado');
+}
 
 /* ── CATEGORIES ── */
 function renderCategories(){
@@ -444,9 +680,26 @@ function renderCategories(){
 }
 function openCatModal(){document.getElementById('cat-modal').classList.add('show')}
 function closeCatModal(){document.getElementById('cat-modal').classList.remove('show')}
-function saveCat(){const n=document.getElementById('cat-name-input').value.trim();if(!n){notify('⚠ Escribí un nombre');return}categories.push({id:Date.now(),name:n,img:document.getElementById('cat-img-input').value||'',visible:document.getElementById('cat-visible').value});closeCatModal();renderCategories();notify('✓ Categoría creada')}
-function toggleCat(id){const c=categories.find(x=>x.id===id);c.visible=c.visible==='si'?'no':'si';renderCategories();notify('✓ Visibilidad actualizada')}
-function deleteCat(id){if(!confirm('¿Eliminar?'))return;categories=categories.filter(c=>c.id!==id);renderCategories();notify('✓ Eliminada')}
+async function saveCat(){
+  if(!_adminPass){notify('⚠ Sesión no válida');return;}
+  const n=document.getElementById('cat-name-input').value.trim();
+  if(!n){notify('⚠ Escribí un nombre');return}
+  const{data}=await sb.rpc('admin_save_category',{p_admin_pass:_adminPass,p_name:n,p_img:document.getElementById('cat-img-input').value||'',p_visible:document.getElementById('cat-visible').value});
+  if(!data||!data.ok){notify('⚠ Acceso denegado');return;}
+  await loadCategories();closeCatModal();renderCategories();notify('✓ Categoría creada');
+}
+async function toggleCat(id){
+  if(!_adminPass){return;}
+  const c=categories.find(x=>x.id===id);const nv=c.visible==='si'?'no':'si';
+  await sb.rpc('admin_toggle_category',{p_admin_pass:_adminPass,p_id:id,p_visible:nv});
+  await loadCategories();renderCategories();notify('✓ Visibilidad actualizada');
+}
+async function deleteCat(id){
+  if(!_adminPass){return;}
+  if(!confirm('¿Eliminar?'))return;
+  await sb.rpc('admin_delete_category',{p_admin_pass:_adminPass,p_id:id});
+  await loadCategories();renderCategories();notify('✓ Eliminada');
+}
 
 /* ── DASH ── */
 function updateDash(){
@@ -465,5 +718,31 @@ function updateDash(){
 let _nt=null;
 function notify(msg){clearTimeout(_nt);const n=document.getElementById('notif');n.textContent=msg;n.classList.add('show');_nt=setTimeout(()=>n.classList.remove('show'),2600)}
 
+/* ── CONTACT FORM ── */
+function submitContactForm() {
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value.trim();
+  const message = document.getElementById('cf-message').value.trim();
+  
+  if(!name || !email || !subject) {
+    notify('⚠ Por favor completá nombre, email y asunto');
+    return;
+  }
+  
+  let msg = `Hola Virginia! Me contacto desde la web:\n\n*Nombre:* ${name}\n*Email:* ${email}\n*Asunto:* ${subject}`;
+  if(message) msg += `\n*Mensaje:* ${message}`;
+  
+  window.open(`https://wa.me/5491176052037?text=${encodeURIComponent(msg)}`, '_blank');
+  notify('✓ Redirigiendo a WhatsApp...');
+}
+
 /* ── INIT ── */
-renderFrontend();updateCartUI();handleHash();
+/* ── INIT ── */
+async function initApp(){
+  await Promise.all([loadProducts(),loadCategories()]);
+  renderFrontend();
+  updateCartUI();
+  handleHash();
+}
+initApp();
