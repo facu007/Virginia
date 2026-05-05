@@ -68,8 +68,8 @@ async function loadCategories(){
 function toggleMenu(){
   document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.toggle('open'));
   const mm=document.getElementById('mobile-menu');
-  const nav=mm.closest('.page')?.querySelector('nav')||document.querySelector('.page.active nav')||document.querySelector('nav');
-  if(nav){mm.style.top=nav.getBoundingClientRect().bottom+'px';}
+  const nav=document.querySelector('.page.active nav')||document.querySelector('nav');
+  if(nav) mm.style.top=nav.getBoundingClientRect().bottom+'px';
   mm.classList.toggle('open');
 }
 function closeMM(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.remove('open'));document.getElementById('mobile-menu').classList.remove('open')}
