@@ -5,9 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Virginia Oficial — Indumentaria urbana fabricada en Buenos Aires. Buzos, remeras, pantalones y más. Venta minorista y mayorista. Envíos a todo el país.">
 <meta name="theme-color" content="#0a0a0a">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Virginia Oficial | Ropa Urbana">
+<meta property="og:description" content="Fabricantes de indumentaria urbana desde Flores, Buenos Aires. Mayorista y minorista. Envíos a todo el país.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
 <title>Virginia Oficial | Ropa Urbana — Flores, Buenos Aires</title>
+
+<!-- Preconnects -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fnqqpihplrybawdfwvam.supabase.co">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://wa.me">
+
+<!-- Fonts & Styles -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -598,7 +612,10 @@
       <button class="admin-tab active" onclick="switchUserTab('perfil',this)">Mi Perfil</button>
       <button class="admin-tab" onclick="switchUserTab('pedidos',this)">Mis Pedidos</button>
     </div>
-    <button class="admin-exit" onclick="exitAdmin()">← Salir</button>
+    <div style="display:flex;gap:8px">
+      <button class="admin-exit" onclick="goHome()">← Volver</button>
+      <button class="admin-exit" onclick="exitAdmin()" style="color:var(--danger)">Cerrar sesión</button>
+    </div>
   </nav>
   <div class="admin-content">
 

@@ -99,6 +99,10 @@ function handleHash() {
     showPage('user-page');
     renderUserProfile();
   } else if (h === '#login') {
+    if(currentUser){
+      window.location.hash=currentUser.isAdmin?'#admin':'#cuenta';
+      return;
+    }
     showPage('site-page');
     if(login) login.classList.remove('hidden');
   } else if (h === '#info-mayorista') {
@@ -258,7 +262,7 @@ function renderProductCard(p) {
   return `
     <div class="product-card" onclick="showProduct(${p.id})">
       <div class="product-img-wrap">
-        <img src="${p.img}" alt="${p.name}" loading="lazy">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">
         ${p.badge==='new'?'<span class="product-badge badge-new">Nuevo</span>':p.badge==='hot'?'<span class="product-badge badge-hot">Popular</span>':p.badge==='off'?'<span class="product-badge badge-off">Oferta</span>':''}
         ${p.status==='agotado'?'<span class="product-badge badge-off" style="top:auto;bottom:8px;background:rgba(0,0,0,.7)">Agotado</span>':''}
       </div>
@@ -270,13 +274,18 @@ function renderProductCard(p) {
       </div>
     </div>`;
 }
+let _renderTimer=null;
 function renderFrontend(){
-  const g=document.getElementById('products-grid');
-  g.innerHTML=products.filter(p=>p.status!=='inactivo').map(renderProductCard).join('');
+  clearTimeout(_renderTimer);
+  _renderTimer=setTimeout(()=>{
+    const g=document.getElementById('products-grid');
+    if(!g) return;
+    g.innerHTML=products.filter(p=>p.status!=='inactivo').map(renderProductCard).join('');
+  },16);
 }
 function renderCategoryPage(catName){
-  const catProds = products.filter(p=>p.cat.toLowerCase()===catName.toLowerCase() && p.status!=='inactivo');
   document.getElementById('cat-page-title').textContent = catName.toUpperCase();
+  const catProds = products.filter(p=>p.cat.toLowerCase()===catName.toLowerCase() && p.status!=='inactivo');
   const g=document.getElementById('cat-products-grid');
   if(catProds.length===0){
     g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#777;font-size:14px">Próximamente nuevos ingresos en esta categoría.</div>';
@@ -787,10 +796,20 @@ function submitContactForm() {
 /* ── INIT ── */
 async function initApp(){
   restoreSession();
-  await Promise.all([loadProducts(),loadCategories()]);
+  try{
+    await Promise.all([loadProducts(),loadCategories()]);
+  }catch(e){
+    console.warn('Error cargando datos:',e);
+  }
   renderFrontend();
   updateCartUI();
   updateNavAuth();
   handleHash();
+  // Debounce admin search
+  const searchInput=document.getElementById('search-productos');
+  if(searchInput){
+    let _st=null;
+    searchInput.addEventListener('input',()=>{clearTimeout(_st);_st=setTimeout(renderAdminProducts,250);});
+  }
 }
 initApp();
