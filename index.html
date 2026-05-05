@@ -22,8 +22,17 @@
 <!-- Fonts & Styles -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="position:fixed;inset:0;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity .4s">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:.14em;color:#f5f2ec">VIRGINIA<span style="color:#c8a96e">.</span></div>
+  <div style="width:120px;height:2px;background:#2a2824;border-radius:2px;overflow:hidden"><div style="width:40%;height:100%;background:#c8a96e;animation:loadbar 1s ease infinite"></div></div>
+</div>
+<style>@keyframes loadbar{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}</style>
 
 <div class="notif" id="notif"></div>
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
@@ -114,6 +123,12 @@
 
   <section class="section" style="padding-top:0" id="tienda">
     <div class="section-header"><h2 class="section-title">LOS MÁS BUSCADOS</h2><a class="section-link">Ver todos →</a></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center">
+      <input type="text" id="shop-search" placeholder="🔍 Buscar producto..." oninput="filterShop()" style="flex:1;min-width:200px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);color:var(--white);font-size:13px;outline:none;font-family:var(--fb)">
+      <select id="shop-cat-filter" onchange="filterShop()" style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);color:var(--gray-muted);font-size:12px;font-family:var(--fb);cursor:pointer">
+        <option value="">Todas las categorías</option>
+      </select>
+    </div>
     <div class="products-grid" id="products-grid"></div>
   </section>
 
@@ -689,12 +704,9 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
         <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
           <h3 style="font-family:var(--fd);font-size:18px;letter-spacing:.1em;margin-bottom:16px;color:var(--accent)">ÚLTIMOS PEDIDOS</h3>
-          <div class="table-scroll"><table class="admin-table" style="border:none"><thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead><tbody>
-            <tr><td style="font-family:var(--fd);color:#888">#0047</td><td>Romina G.</td><td style="color:var(--accent)">$24.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
-            <tr><td style="font-family:var(--fd);color:#888">#0046</td><td>Lucas M.</td><td style="color:var(--accent)">$5.300</td><td><span class="td-badge badge-agotado">Pendiente</span></td></tr>
-            <tr><td style="font-family:var(--fd);color:#888">#0045</td><td>Valentina P.</td><td style="color:var(--accent)">$45.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
-            <tr><td style="font-family:var(--fd);color:#888">#0044</td><td>May. Rosario</td><td style="color:var(--accent)">$98.000</td><td><span class="td-badge badge-activo">Enviado</span></td></tr>
-          </tbody></table></div>
+          <div id="dash-last-orders" style="display:flex;flex-direction:column;gap:0">
+            <div style="color:#555;font-size:12px;text-align:center;padding:16px">Cargando...</div>
+          </div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
           <h3 style="font-family:var(--fd);font-size:18px;letter-spacing:.1em;margin-bottom:16px;color:var(--accent)">ALERTAS DE STOCK</h3>
@@ -716,12 +728,14 @@
 
     <!-- PEDIDOS -->
     <div class="admin-section" id="tab-pedidos">
-      <div class="admin-toolbar"><input class="admin-search" type="text" placeholder="Buscar..."><select class="admin-select"><option>Todos</option><option>Pendiente</option><option>Enviado</option><option>Cancelado</option></select></div>
-      <div class="table-scroll"><table class="admin-table"><thead><tr><th>#</th><th>Cliente</th><th>Canal</th><th>Producto</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acc.</th></tr></thead><tbody>
-        <tr><td style="font-family:var(--fd);color:#888">#0047</td><td>Romina García</td><td style="color:#777">WhatsApp</td><td>Frizado Nissmo ×2</td><td class="td-price">$24.000</td><td style="color:#555;font-size:11px">29/04/26</td><td><span class="td-badge badge-activo">Enviado</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button></div></td></tr>
-        <tr><td style="font-family:var(--fd);color:#888">#0046</td><td>Lucas Martínez</td><td style="color:#777">Instagram</td><td>Over Luna ×1</td><td class="td-price">$5.300</td><td style="color:#555;font-size:11px">28/04/26</td><td><span class="td-badge badge-agotado">Pendiente</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button><button class="btn-del">✕</button></div></td></tr>
-        <tr><td style="font-family:var(--fd);color:#888">#0045</td><td>Valentina Pérez</td><td style="color:#777">WhatsApp</td><td>Buzo Comb. ×3</td><td class="td-price">$45.000</td><td style="color:#555;font-size:11px">27/04/26</td><td><span class="td-badge badge-activo">Enviado</span></td><td><div class="td-actions"><button class="btn-edit">Ver</button></div></td></tr>
-      </tbody></table></div>
+      <div class="admin-toolbar">
+        <select class="admin-select" id="orders-filter" onchange="renderAdminOrders()">
+          <option value="">Todos</option><option value="pendiente">Pendiente</option><option value="enviado">Enviado</option><option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div id="admin-orders-container" style="display:flex;flex-direction:column;gap:12px">
+        <div style="color:#555;font-size:12px;text-align:center;padding:30px">Cargando pedidos...</div>
+      </div>
     </div>
 
     <!-- CATEGORÍAS -->
