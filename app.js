@@ -6,7 +6,50 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let products=[],categories=[];
 let cart=[],editingId=null,_filterCat='',_filterStatus='';
 let currentUser=null;
-let _adminPass=null; // stored in memory only during admin session
+let _adminPass=null;
+
+/* ── SESSION PERSISTENCE ── */
+function saveSession(){
+  if(!currentUser) return;
+  sessionStorage.setItem('va_session',JSON.stringify({id:currentUser.id,username:currentUser.username,isAdmin:currentUser.isAdmin,_pw:currentUser._pw,profile:currentUser.profile}));
+  if(_adminPass) sessionStorage.setItem('va_admin',_adminPass);
+}
+function restoreSession(){
+  try{
+    const s=sessionStorage.getItem('va_session');
+    if(!s) return false;
+    const d=JSON.parse(s);
+    currentUser=d;
+    _adminPass=sessionStorage.getItem('va_admin')||null;
+    return true;
+  }catch(e){return false;}
+}
+function clearSession(){
+  sessionStorage.removeItem('va_session');
+  sessionStorage.removeItem('va_admin');
+  currentUser=null;_adminPass=null;
+}
+function updateNavAuth(){
+  document.querySelectorAll('.nav-btn').forEach(btn=>{
+    if(currentUser){
+      btn.textContent=currentUser.isAdmin?'Admin':'Mi cuenta';
+      btn.onclick=()=>{closeMM();window.location.hash=currentUser.isAdmin?'#admin':'#cuenta';};
+    } else {
+      btn.textContent='Iniciar sesión';
+      btn.onclick=()=>showAdmin();
+    }
+  });
+  const mmAdmin=document.querySelector('.mm-admin');
+  if(mmAdmin){
+    if(currentUser){
+      mmAdmin.textContent=currentUser.isAdmin?'⚙ Panel Admin':'👤 Mi cuenta';
+      mmAdmin.onclick=()=>{closeMM();window.location.hash=currentUser.isAdmin?'#admin':'#cuenta';};
+    } else {
+      mmAdmin.textContent='🔐 Iniciar sesión';
+      mmAdmin.onclick=()=>showAdmin();
+    }
+  }
+}
 
 /* Helper: map Supabase product row to local format */
 function mapProduct(r){return{id:r.id,name:r.name,cat:r.cat,price:Number(r.price),oldprice:Number(r.oldprice||0),stock:r.stock||0,status:r.status||'activo',badge:r.badge||'',sizes:r.sizes||'',colors:r.colors||'',desc:r.description||'',img:r.img||''}}
@@ -87,7 +130,7 @@ function handleHash() {
 }
 
 /* ── AUTH ── */
-function showAdmin(){ closeMM(); window.location.hash='#login'; }
+function showAdmin(){ closeMM(); if(currentUser){window.location.hash=currentUser.isAdmin?'#admin':'#cuenta';} else {window.location.hash='#login';} }
 async function doLogin(){
   const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;
   if(!u||!p){document.getElementById('login-err').style.display='block';return;}
@@ -101,6 +144,8 @@ async function doLogin(){
     currentUser={id:data.id,username:data.username,isAdmin:data.is_admin,profile:{name:data.name||'',last:data.last_name||'',prov:data.prov||'',city:data.city||'',addr:data.addr||'',zip:data.zip||'',tel:data.tel||'',doc:data.doc||'',shipping:data.shipping||'',email:data.email||''}};
     currentUser._pw=p; // password in memory for profile updates
     if(data.is_admin) _adminPass=p;
+    saveSession();
+    updateNavAuth();
     document.getElementById('login-screen').classList.add('hidden');
     if(data.is_admin){window.location.hash='#admin';renderAdminProducts();renderCategories();updateDash();}
     else{window.location.hash='#cuenta';notify('✓ Bienvenido, '+u);}
@@ -109,6 +154,8 @@ async function doLogin(){
     const{data:reg}=await sb.rpc('register_user',{p_username:u,p_password:p});
     if(reg && reg.ok){
       currentUser={id:reg.id,username:reg.username,isAdmin:false,profile:{},_pw:p};
+      saveSession();
+      updateNavAuth();
       document.getElementById('login-screen').classList.add('hidden');
       window.location.hash='#cuenta';
       notify('✓ Cuenta creada. Bienvenido, '+u);
@@ -119,7 +166,7 @@ async function doLogin(){
     document.getElementById('login-err').style.display='block';
   }
 }
-function exitAdmin(){document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none';currentUser=null;_adminPass=null;window.location.hash='#inicio';}
+function exitAdmin(){document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-err').style.display='none';clearSession();updateNavAuth();window.location.hash='#inicio';}
 
 /* ── TABS ── */
 function switchTab(n,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
@@ -738,11 +785,12 @@ function submitContactForm() {
 }
 
 /* ── INIT ── */
-/* ── INIT ── */
 async function initApp(){
+  restoreSession();
   await Promise.all([loadProducts(),loadCategories()]);
   renderFrontend();
   updateCartUI();
+  updateNavAuth();
   handleHash();
 }
 initApp();
