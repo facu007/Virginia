@@ -73,6 +73,7 @@ function toggleMenu(){
   mm.classList.toggle('open');
 }
 function closeMM(){document.querySelectorAll('.hamburger').forEach(hb=>hb.classList.remove('open'));document.getElementById('mobile-menu').classList.remove('open')}
+window.addEventListener('scroll',closeMM,{passive:true});
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'instant'})}
 
 function goHome(){ closeMM(); if(window.location.hash==='#inicio') handleHash(); else window.location.hash='#inicio'; }
