@@ -1,9 +1,8 @@
--- ══════════════════════════════════════════════════════════════
--- VIRGINIA OFICIAL — SUPABASE SETUP
--- Ejecutar esto en: Supabase → SQL Editor → New Query → Run
--- ══════════════════════════════════════════════════════════════
+-- ============================================================
+-- VIRGINIA OFICIAL | SUPABASE SETUP
+-- Ejecutar primero en Supabase SQL Editor
+-- ============================================================
 
--- ═══ PRODUCTOS ═══
 CREATE TABLE IF NOT EXISTS products (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -16,11 +15,13 @@ CREATE TABLE IF NOT EXISTS products (
   sizes TEXT DEFAULT '',
   colors TEXT DEFAULT '',
   img TEXT DEFAULT '',
+  images TEXT DEFAULT '',
   description TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ═══ CATEGORÍAS ═══
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images TEXT DEFAULT '';
+
 CREATE TABLE IF NOT EXISTS categories (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -29,11 +30,12 @@ CREATE TABLE IF NOT EXISTS categories (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ═══ USUARIOS ═══
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
+  session_token TEXT,
+  session_expires_at TIMESTAMPTZ,
   name TEXT DEFAULT '',
   last_name TEXT DEFAULT '',
   prov TEXT DEFAULT '',
@@ -47,7 +49,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ═══ PEDIDOS ═══
+ALTER TABLE users ADD COLUMN IF NOT EXISTS session_token TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS session_expires_at TIMESTAMPTZ;
+
 CREATE TABLE IF NOT EXISTS orders (
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
@@ -67,38 +71,51 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ═══ RLS (Row Level Security) ═══
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
--- Políticas: permitir lectura y escritura pública (anon key)
-CREATE POLICY "products_all" ON products FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "categories_all" ON categories FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "users_all" ON users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "orders_all" ON orders FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS products_read ON products;
+DROP POLICY IF EXISTS categories_read ON categories;
 
--- ═══ DATOS INICIALES: PRODUCTOS ═══
-INSERT INTO products (name, cat, price, oldprice, stock, status, badge, sizes, colors, description, img) VALUES
-('Over M/L Capicua', 'Remeras', 7500, 0, 24, 'activo', 'new', 'S,M,L,XL', 'Negro,Blanco,Gris', 'Remera over con estampado capicúa. 100% algodón.', 'img/DSC06907-scaled.jpg'),
-('Over Luna', 'Remeras', 5300, 0, 18, 'activo', 'hot', 'S,M,L', 'Negro,Bordó', 'Remera over con bordado luna.', 'img/DSC06925-scaled.jpg'),
-('Frizado Nissmo', 'Buzos', 12000, 0, 9, 'activo', '', 'S,M,L,XL,XXL', 'Negro,Azul', 'Buzo frizado interior cálido.', 'img/IMG-20260408-WA0124-scaled.jpg'),
-('Frizado Oni 2.0', 'Buzos', 13500, 15000, 14, 'activo', 'new', 'M,L,XL', 'Negro,Gris', 'Segunda versión del Oni.', 'img/inbound4468380888781350918-601x800.jpg'),
-('Frizado Three 2.0', 'Buzos', 13500, 0, 6, 'activo', '', 'M,L,XL', 'Negro', 'Buzo frizado edición Three 2.0.', 'img/inbound4849073990589537579.jpg'),
-('Buzo Combinado *7*', 'Buzos', 15000, 0, 0, 'agotado', '', 'S,M,L,XL', 'Negro/Gris', 'Buzo combinado bicolor.', 'img/virginia-125-1-scaled.jpg'),
-('Buzo Over Seize', 'Buzos', 14000, 0, 11, 'activo', '', 'L,XL,XXL', 'Blanco,Negro', 'Buzo oversize.', 'img/WhatsApp-Image-2025-02-19-at-08.51.17.jpeg'),
-('Frizado Honda 2.0', 'Buzos', 13500, 0, 3, 'activo', '', 'M,L,XL', 'Negro,Rojo', 'Frizado Honda Motorsport.', 'img/WhatsApp-Image-2025-04-03-at-12.23.29-1.jpeg');
+CREATE POLICY products_read ON products
+FOR SELECT
+USING (true);
 
--- ═══ DATOS INICIALES: CATEGORÍAS ═══
-INSERT INTO categories (name, img, visible) VALUES
-('Buzos', 'img/WhatsApp-Image-2025-06-30-at-10.16.49.jpeg', 'si'),
-('Remeras', 'img/WhatsApp-Image-2026-04-03-at-14.45.59.jpeg', 'si'),
-('Pantalones', 'img/WhatsApp-Image-2026-04-30-at-15.19.27-1.jpeg', 'si'),
-('Kids', 'img/DSC06907-scaled.jpg', 'si'),
-('Premium', 'img/DSC06925-scaled.jpg', 'si'),
-('Rústico', 'img/IMG-20260408-WA0124-scaled.jpg', 'si'),
-('Combos', 'img/inbound4468380888781350918-601x800.jpg', 'si');
+CREATE POLICY categories_read ON categories
+FOR SELECT
+USING (true);
 
--- ═══ ADMIN USER ═══
-INSERT INTO users (username, password, name) VALUES ('admin', 'virginia2026', 'Admin');
+INSERT INTO products (name, cat, price, oldprice, stock, status, badge, sizes, colors, img, images, description)
+SELECT *
+FROM (
+  VALUES
+    ('Over M/L Capicua', 'Remeras', 7500, 0, 24, 'activo', 'new', 'S,M,L,XL', 'Negro,Blanco,Gris', 'img/DSC06907-scaled.jpg', 'img/DSC06907-scaled.jpg', 'Remera over con estampado capicua. 100% algodon.'),
+    ('Over Luna', 'Remeras', 5300, 0, 18, 'activo', 'hot', 'S,M,L', 'Negro,Bordo', 'img/DSC06925-scaled.jpg', 'img/DSC06925-scaled.jpg', 'Remera over con bordado luna.'),
+    ('Frizado Nissmo', 'Buzos', 12000, 0, 9, 'activo', '', 'S,M,L,XL,XXL', 'Negro,Azul', 'img/IMG-20260408-WA0124-scaled.jpg', 'img/IMG-20260408-WA0124-scaled.jpg', 'Buzo frizado interior calido.'),
+    ('Frizado Oni 2.0', 'Buzos', 13500, 15000, 14, 'activo', 'new', 'M,L,XL', 'Negro,Gris', 'img/inbound4468380888781350918-601x800.jpg', 'img/inbound4468380888781350918-601x800.jpg', 'Segunda version del Oni.'),
+    ('Frizado Three 2.0', 'Buzos', 13500, 0, 6, 'activo', '', 'M,L,XL', 'Negro', 'img/inbound4849073990589537579.jpg', 'img/inbound4849073990589537579.jpg', 'Buzo frizado edicion Three 2.0.'),
+    ('Buzo Combinado *7*', 'Buzos', 15000, 0, 0, 'agotado', '', 'S,M,L,XL', 'Negro/Gris', 'img/virginia-125-1-scaled.jpg', 'img/virginia-125-1-scaled.jpg', 'Buzo combinado bicolor.'),
+    ('Buzo Over Seize', 'Buzos', 14000, 0, 11, 'activo', '', 'L,XL,XXL', 'Blanco,Negro', 'img/WhatsApp-Image-2025-02-19-at-08.51.17.jpeg', 'img/WhatsApp-Image-2025-02-19-at-08.51.17.jpeg', 'Buzo oversize.'),
+    ('Frizado Honda 2.0', 'Buzos', 13500, 0, 3, 'activo', '', 'M,L,XL', 'Negro,Rojo', 'img/WhatsApp-Image-2025-04-03-at-12.23.29-1.jpeg', 'img/WhatsApp-Image-2025-04-03-at-12.23.29-1.jpeg', 'Frizado Honda Motorsport.')
+) AS seed(name, cat, price, oldprice, stock, status, badge, sizes, colors, img, images, description)
+WHERE NOT EXISTS (SELECT 1 FROM products);
+
+INSERT INTO categories (name, img, visible)
+SELECT *
+FROM (
+  VALUES
+    ('Buzos', 'img/WhatsApp-Image-2025-06-30-at-10.16.49.jpeg', 'si'),
+    ('Remeras', 'img/WhatsApp-Image-2026-04-03-at-14.45.59.jpeg', 'si'),
+    ('Pantalones', 'img/WhatsApp-Image-2026-04-30-at-15.19.27-1.jpeg', 'si'),
+    ('Kids', 'img/DSC06907-scaled.jpg', 'si'),
+    ('Premium', 'img/DSC06925-scaled.jpg', 'si'),
+    ('Rústico', 'img/IMG-20260408-WA0124-scaled.jpg', 'si'),
+    ('Combos', 'img/inbound4468380888781350918-601x800.jpg', 'si')
+) AS seed(name, img, visible)
+WHERE NOT EXISTS (SELECT 1 FROM categories);
+
+INSERT INTO users (username, password, name)
+VALUES ('admin', 'virginia2026', 'Admin')
+ON CONFLICT (username) DO NOTHING;

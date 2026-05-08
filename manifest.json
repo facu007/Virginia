@@ -1,21 +1,32 @@
 {
   "name": "Virginia Oficial",
   "short_name": "Virginia",
-  "description": "Indumentaria urbana — Flores, Buenos Aires",
+  "description": "Indumentaria urbana - Flores, Buenos Aires",
+  "lang": "es-AR",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "img/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "img/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }
