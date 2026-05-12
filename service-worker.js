@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'virginia-static-v1'
-const RUNTIME_CACHE = 'virginia-runtime-v1'
+const STATIC_CACHE = 'virginia-static-v2'
+const RUNTIME_CACHE = 'virginia-runtime-v2'
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -34,9 +34,27 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
   if (url.origin !== self.location.origin) return
 
-  const isStaticAsset =
+  const isCoreAsset =
+    url.pathname === '/' ||
+    url.pathname.endsWith('.html') ||
     url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.js')
+
+  if (isCoreAsset) {
+    // Network-first for core assets (HTML, CSS, JS): always try to get the latest
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const cloned = response.clone()
+          caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, cloned))
+          return response
+        })
+        .catch(() => caches.match(event.request))
+    )
+    return
+  }
+
+  const isStaticAsset =
     url.pathname.endsWith('.svg') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.jpg') ||
@@ -45,6 +63,7 @@ self.addEventListener('fetch', (event) => {
     url.pathname.endsWith('.json')
 
   if (isStaticAsset) {
+    // Cache-first for images and other static assets (these rarely change)
     event.respondWith(
       caches.match(event.request).then((cached) => {
         if (cached) return cached
