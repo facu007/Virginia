@@ -1289,12 +1289,18 @@ function renderProductGallery(product) {
   currentPdImages = getProductImages(product)
   const thumbs = document.getElementById('pd-thumbs')
   if (thumbs) {
-    thumbs.innerHTML = currentPdImages
-      .map(
-        (image, index) =>
-          `<button class="pd-thumb${index === currentPdImageIndex ? ' active' : ''}" onclick="setProductImage(${index})" type="button"><img src="${escapeHtml(image)}" alt="${escapeHtml(product.name)} ${index + 1}"></button>`
-      )
-      .join('')
+    if (currentPdImages.length <= 1) {
+      thumbs.innerHTML = ''
+      thumbs.style.display = 'none'
+    } else {
+      thumbs.style.display = ''
+      thumbs.innerHTML = currentPdImages
+        .map(
+          (image, index) =>
+            `<button class="pd-thumb${index === currentPdImageIndex ? ' active' : ''}" onclick="setProductImage(${index})" type="button"><img src="${escapeHtml(image)}" alt="${escapeHtml(product.name)} ${index + 1}"></button>`
+        )
+        .join('')
+    }
   }
   setProductImage(currentPdImageIndex)
 }
